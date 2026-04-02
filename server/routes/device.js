@@ -1,12 +1,11 @@
 const express = require("express");
 const { pool } = require("../db");
-const validateApiKey = require("../middleware/apiKey");
 
 const router = express.Router();
 
 /*
-  DEMO LINK:
-  Device VRITARA001 -> linked to this email
+  DEMO PROTOTYPE LINK
+  One device → One email account
 */
 const LINKED_EMAIL = "swasthikshetty547@gmail.com";
 const LINKED_DEVICE_ID = "VRITARA001";
@@ -14,24 +13,17 @@ const LINKED_DEVICE_ID = "VRITARA001";
 // ==========================
 // DEVICE SOS ROUTE
 // ==========================
-router.post("/sos", validateApiKey, async (req, res) => {
+router.post("/sos", async (req, res) => {
   const client = await pool.connect();
 
   try {
-    const {
-      device_id,
-      trigger_type,
-      latitude,
-      longitude,
-      sound_level,
-      motion_level
-    } = req.body;
+    const { device_id, latitude, longitude, trigger_type, sound_level, motion_level } = req.body;
 
     if (!device_id) {
       return res.status(400).json({ error: "device_id required" });
     }
 
-    // Check if correct device
+    // Check if correct prototype device
     if (device_id !== LINKED_DEVICE_ID) {
       return res.status(404).json({
         error: "Unknown device",
@@ -40,7 +32,7 @@ router.post("/sos", validateApiKey, async (req, res) => {
       });
     }
 
-    // Find linked user from email
+    // Find your app user by email
     const userResult = await client.query(
       "SELECT id, username, email FROM users WHERE email = $1 LIMIT 1",
       [LINKED_EMAIL]
@@ -58,8 +50,18 @@ router.post("/sos", validateApiKey, async (req, res) => {
 
     await client.query("BEGIN");
 
+    // Save location if available
+    if (latitude != null && longitude != null) {
+      await client.query(
+        "INSERT INTO location_logs (user_id, latitude, longitude) VALUES ($1, $2, $3)",
+        [user_id, latitude, longitude]
+      );
+    }
+
+    // Save incident to YOUR history
     const incidentResult = await client.query(
-      `INSERT INTO incident_logs (user_id, type, latitude, longitude, message, status, created_at)
+      `INSERT INTO incident_logs 
+       (user_id, type, latitude, longitude, message, status, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, NOW())
        RETURNING *`,
       [
@@ -74,6 +76,12 @@ router.post("/sos", validateApiKey, async (req, res) => {
 
     const incident = incidentResult.rows[0];
 
+    // Update user emergency state
+    await client.query(
+      "UPDATE users SET emergency_state='emergency', active_incident_id=$1 WHERE id=$2",
+      [incident.id, user_id]
+    );
+
     await client.query("COMMIT");
 
     res.json({
@@ -82,6 +90,7 @@ router.post("/sos", validateApiKey, async (req, res) => {
       linked_user: linkedUser,
       incident
     });
+
   } catch (err) {
     await client.query("ROLLBACK");
     console.error("Device SOS error:", err);
@@ -94,7 +103,7 @@ router.post("/sos", validateApiKey, async (req, res) => {
 // ==========================
 // DEVICE HEARTBEAT ROUTE
 // ==========================
-router.post("/heartbeat", validateApiKey, async (req, res) => {
+router.post("/heartbeat", async (req, res) => {
   try {
     const { device_id } = req.body || {};
 
