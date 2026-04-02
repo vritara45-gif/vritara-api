@@ -3,12 +3,13 @@ const { Pool } = require("pg");
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // IMPORTANT for Render
+    rejectUnauthorized: false, // Required for Render Postgres
   },
 });
 
 async function initializeDatabase() {
   const client = await pool.connect();
+
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -57,11 +58,10 @@ async function initializeDatabase() {
     console.log("✅ Database initialized successfully");
   } catch (err) {
     console.error("❌ Database init error:", err);
+    throw err;
   } finally {
     client.release();
   }
 }
 
-initializeDatabase();
-
-module.exports = { pool };
+module.exports = { pool, initializeDatabase };
