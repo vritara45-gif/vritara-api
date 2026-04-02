@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VRITARA Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <img src="/logo.png" alt="VRITARA" class="sidebar-logo-img" onerror="this.style.display='none'">
+        <h1>VRITARA</h1>
+        <span class="sidebar-tagline">Safety App</span>
+      </div>
+      <div class="sidebar-nav">
+        <button class="nav-item active" data-page="home" onclick="switchPage('home')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" data-page="location" onclick="switchPage('location')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Location</span>
+        </button>
+        <button class="nav-item" data-page="contacts" onclick="switchPage('contacts')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span>Contacts</span>
+        </button>
+        <button class="nav-item" data-page="media" onclick="switchPage('media')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Media</span>
+        </button>
+        <button class="nav-item" data-page="history" onclick="switchPage('history')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>History</span>
+        </button>
+        <button class="nav-item" data-page="settings" onclick="switchPage('settings')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span>Settings</span>
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <button class="nav-item logout-nav" onclick="logout()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="mobile-header">
+      <img src="/logo.png" alt="VRITARA" class="mobile-logo-img" onerror="this.style.display='none'">
+      <h1 class="mobile-logo">VRITARA</h1>
+      <button class="theme-toggle-mobile" onclick="toggleTheme()" title="Toggle theme">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+
+    <main class="main-content">
+      <div id="alertBox"></div>
+
+      <section class="page active" id="page-home">
+        <div class="page-header">
+          <h2>Dashboard</h2>
+          <p class="welcome-text" id="welcomeText">Welcome back!</p>
+        </div>
+
+        <div class="status-bar status-normal" id="statusBar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span id="statusText">Status: Normal</span>
+        </div>
+
+        <div class="sos-section">
+          <div class="sos-ring" id="sosRing">
+            <button class="sos-btn" id="sosBtn" onclick="toggleSOS()">SOS</button>
+          </div>
+          <p class="sos-label" id="sosLabel">Tap to activate emergency</p>
+          <p class="sos-sublabel" id="sosSublabel">Your location and alerts will be sent to your emergency contacts</p>
+        </div>
+
+        <div class="quick-stats" id="quickStats">
+          <div class="stat-card">
+            <div class="stat-number" id="statContacts">0</div>
+            <div class="stat-label">Contacts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statIncidents">0</div>
+            <div class="stat-label">Incidents</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statLocation">--</div>
+            <div class="stat-label">Location</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Upload Evidence
+          </h3>
+          <div class="upload-area">
+            <label class="upload-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Photo
+              <input type="file" accept="image/*" capture="environment" onchange="uploadFile(this)">
+            </label>
+            <label class="upload-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              Audio
+              <input type="file" accept="audio/*" capture="microphone" onchange="uploadFile(this)">
+            </label>
+          </div>
+          <div id="uploadStatus" class="upload-status"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-location">
+        <div class="page-header">
+          <h2>Live Location</h2>
+          <p class="page-desc">Real-time GPS tracking for your safety</p>
+        </div>
+
+        <div class="card location-card">
+          <div class="location-status" id="locationStatus">
+            <div class="location-dot"></div>
+            <span>Tracking active</span>
+          </div>
+          <div class="location-coords">
+            <div class="coord-row">
+              <span class="coord-label">Latitude</span>
+              <span class="coord-value" id="latValue">--</span>
+            </div>
+            <div class="coord-row">
+              <span class="coord-label">Longitude</span>
+              <span class="coord-value" id="lngValue">--</span>
+            </div>
+            <div class="coord-row">
+              <span class="coord-label">Accuracy</span>
+              <span class="coord-value" id="accValue">--</span>
+            </div>
+            <div class="coord-row">
+              <span class="coord-label">Last Updated</span>
+              <span class="coord-value" id="locTimeValue">--</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            Location Sharing
+          </h3>
+          <p class="info-text">Your location is automatically shared with the server when tracking is active. During an SOS, your exact coordinates are sent to all emergency contacts.</p>
+        </div>
+      </section>
+
+      <section class="page" id="page-contacts">
+        <div class="page-header">
+          <h2>Emergency Contacts</h2>
+          <p class="page-desc">Manage up to 3 emergency contacts</p>
+        </div>
+
+        <div class="contacts-counter" id="contactsCounter">
+          <span id="contactCountText">0 / 3 contacts</span>
+        </div>
+
+        <div id="contactsList"></div>
+
+        <div id="addContactSection">
+          <div class="card add-contact-card">
+            <h3 class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              Add New Contact
+            </h3>
+            <div class="contact-form">
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="contactName" placeholder="Contact name">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="contactPhone" placeholder="Phone number">
+              </div>
+              <div class="form-group">
+                <label>Relationship</label>
+                <input type="text" id="contactRelation" placeholder="e.g. Parent, Friend, Spouse">
+              </div>
+              <button class="btn btn-success" onclick="addContact()">Add Contact</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-media">
+        <div class="page-header">
+          <h2>Media Storage</h2>
+          <p class="page-desc">Captured images and audio from incidents</p>
+        </div>
+        <div id="mediaGallery"></div>
+      </section>
+
+      <section class="page" id="page-history">
+        <div class="page-header">
+          <h2>Incident History</h2>
+          <p class="page-desc">Record of all SOS alerts and incidents</p>
+        </div>
+        <div id="incidentList"></div>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <h2>Settings</h2>
+          <p class="page-desc">Manage your account and preferences</p>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4-4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+          </h3>
+          <div class="profile-info" id="profileInfo">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <div class="profile-details">
+              <div class="profile-name" id="profileName">--</div>
+              <div class="profile-email" id="profileEmail">--</div>
+              <div class="profile-phone" id="profilePhone">--</div>
+            </div>
+          </div>
+          <div class="profile-edit hidden" id="profileEditForm">
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" id="editUsername" placeholder="Username">
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="editPhone" placeholder="Phone number">
+            </div>
+            <div class="profile-edit-actions">
+              <button class="btn btn-success" onclick="saveProfile()">Save</button>
+              <button class="btn btn-secondary" onclick="cancelEditProfile()">Cancel</button>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="editProfileBtn" onclick="showEditProfile()">Edit Profile</button>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            Appearance
+          </h3>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Dark Mode</div>
+              <div class="setting-desc">Switch between dark and light theme</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="themeToggle" onchange="toggleTheme()" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Account
+          </h3>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-label">Member Since</div>
+              <div class="setting-desc" id="memberSince">--</div>
+            </div>
+          </div>
+          <button class="btn btn-danger" onclick="logout()" style="margin-top: 16px;">Logout</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="bottom-nav-item active" data-page="home" onclick="switchPage('home')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="bottom-nav-item" data-page="location" onclick="switchPage('location')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Location</span>
+      </button>
+      <button class="bottom-nav-item sos-nav" onclick="toggleSOS()">
+        <div class="sos-nav-btn" id="sosNavBtn">SOS</div>
+      </button>
+      <button class="bottom-nav-item" data-page="media" onclick="switchPage('media')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Media</span>
+      </button>
+      <button class="bottom-nav-item" data-page="settings" onclick="switchPage('settings')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <div class="emergency-overlay hidden" id="emergencyOverlay"></div>
+
+  <div class="modal-overlay hidden" id="deleteModal">
+    <div class="modal-card">
+      <h3>Confirm Delete</h3>
+      <p>Enter your password to delete this media file.</p>
+      <div class="form-group">
+        <input type="password" id="deletePassword" placeholder="Enter your password">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="confirmDeleteMedia()">Delete</button>
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      </div>
+      <p class="modal-error hidden" id="deleteError"></p>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script>
+    if (!localStorage.getItem("vritara_token")) {
+      window.location.href = "/";
+    } else {
+      initDashboard();
+    }
+  </script>
+</body>
+</html>

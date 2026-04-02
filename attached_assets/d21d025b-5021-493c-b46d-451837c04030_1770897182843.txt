@@ -1,0 +1,340 @@
+{
+  "info": {
+    "_postman_id": "b610aec8-75f7-43bd-a57f-057f776ae1b5",
+    "name": "VRITARA Backend API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52259582"
+  },
+  "item": [
+    {
+      "name": "Server Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/status",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Trigger SOS",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ0ZXN0dXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NzA4OTUyNTMsImV4cCI6MTc3MDk4MTY1M30.dlpiDxIeD9L4-xa-xdWxzWpbeMxxbxauXfAIQGmuXB0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ0ZXN0dXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NzA4OTUyNTMsImV4cCI6MTc3MDk4MTY1M30.dlpiDxIeD9L4-xa-xdWxzWpbeMxxbxauXfAIQGmuXB0",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"123\",\n  \"latitude\": \"12.9716\",\n  \"longitude\": \"77.5946\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd.pike.replit.dev/api/sos/toggle",
+          "protocol": "https",
+          "host": [
+            "e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd",
+            "pike",
+            "replit",
+            "dev"
+          ],
+          "path": [
+            "api",
+            "sos",
+            "toggle"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Upload Media",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "media",
+              "type": "file",
+              "uuid": "466a7408-9419-4f29-83e0-88d32f7bb378",
+              "value": null
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/upload",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "upload"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Location",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ0ZXN0dXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NzA4OTUyNTMsImV4cCI6MTc3MDk4MTY1M30.dlpiDxIeD9L4-xa-xdWxzWpbeMxxbxauXfAIQGmuXB0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 12.9716,\n  \"longitude\": 77.5946\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd.pike.replit.dev/api/location",
+          "protocol": "https",
+          "host": [
+            "e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd",
+            "pike",
+            "replit",
+            "dev"
+          ],
+          "path": [
+            "api",
+            "location"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"swasthik@gmail.com\",\n  \"password\": \"swasthik@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://vritara-backend.replit.app/api/auth/login",
+          "protocol": "https",
+          "host": [
+            "vritara-backend",
+            "replit",
+            "app"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"testuser@gmail.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Test@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://vritara-backend.replit.app/api/auth/signup",
+          "protocol": "https",
+          "host": [
+            "vritara-backend",
+            "replit",
+            "app"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Contact",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ0ZXN0dXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NzA4OTUyNTMsImV4cCI6MTc3MDk4MTY1M30.dlpiDxIeD9L4-xa-xdWxzWpbeMxxbxauXfAIQGmuXB0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Father\",\n  \"phone\": \"9876543210\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd.pike.replit.dev/api/contacts",
+          "protocol": "https",
+          "host": [
+            "e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd",
+            "pike",
+            "replit",
+            "dev"
+          ],
+          "path": [
+            "api",
+            "contacts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Trigger Manual SOS",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ0ZXN0dXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NzA4OTUyNTMsImV4cCI6MTc3MDk4MTY1M30.dlpiDxIeD9L4-xa-xdWxzWpbeMxxbxauXfAIQGmuXB0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 12.9716,\n  \"longitude\": 77.5946,\n  \"message\": \"Manual emergency triggered\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd.pike.replit.dev/api/sos/manual",
+          "protocol": "https",
+          "host": [
+            "e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd",
+            "pike",
+            "replit",
+            "dev"
+          ],
+          "path": [
+            "api",
+            "sos",
+            "manual"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Trigger Automatic SOS",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ0ZXN0dXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NzA4OTUyNTMsImV4cCI6MTc3MDk4MTY1M30.dlpiDxIeD9L4-xa-xdWxzWpbeMxxbxauXfAIQGmuXB0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 12.9716,\n  \"longitude\": 77.5946,\n  \"sound_level\": 85,\n  \"motion_level\": 3.5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd.pike.replit.dev/api/sos/automatic",
+          "protocol": "https",
+          "host": [
+            "e0538aec-ddf0-4112-ab9f-3752d0d16dab-00-317onqis7vczd",
+            "pike",
+            "replit",
+            "dev"
+          ],
+          "path": [
+            "api",
+            "sos",
+            "automatic"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Incident History",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+Continue building from my existing Vritara full-stack app (Node.js + Express + frontend + database already working).
+
+DO NOT break existing features like:
+- Login / Signup / OTP
+- Emergency contacts
+- /status route
+- /api/sensor-data
+- /api/emergency/manual
+- Database tables already created
+
+Now implement the following upgrades carefully:
+
+--------------------------------------------------
+
+1) MANUAL SOS TOGGLE FEATURE
+
+• The SOS button must work as a toggle.
+
+When clicked first time:
+- Set status = "EMERGENCY"
+- Save incident in database (incident_logs)
+- Start media capture process
+- Change button color to RED
+- Show status text: EMERGENCY
+
+When clicked again:
+- Set status = "NORMAL"
+- Mark incident as resolved
+- Stop media capture
+- Change button color to GREEN
+- Show status text: NORMAL
+
+Store current emergency state per user in database.
+
+--------------------------------------------------
+
+2) AUTO CAMERA + AUDIO CAPTURE (SIMULATED SMARTWATCH)
+
+When SOS becomes EMERGENCY:
+
+• Automatically:
+   - Capture image every 5 seconds (simulate if needed)
+   - Start audio recording segments (simulate if needed)
+
+• Store files inside:
+   uploads/images/
+   uploads/audio/
+
+• Save file paths in media_storage table linked to:
+   - user_id
+   - incident_id
+
+• On dashboard create new section:
+   "Media Storage"
+
+It should:
+- Display images
+- Display audio files
+- Group by incident
+- Show timestamp
+
+Each file must have:
+   DELETE button
+
+IMPORTANT:
+Before deleting any media:
+   - Ask user to enter password
+   - Verify using bcrypt
+   - If correct → delete file + DB entry
+   - If wrong → show error message
+
+--------------------------------------------------
+
+3) UI DESIGN UPDATE
+
+• Change all orange/yellow font colors to pure white (#ffffff)
+• Keep background aesthetic but improve premium look
+• Make UI modern, clean, minimal
+
+Add logo support:
+
+At top of login and dashboard add:
+
+<img src="/logo.png" class="app-logo" />
+
+Center the logo.
+App name below logo in white.
+Improve spacing and typography.
+
+I will upload logo.png manually in public folder.
+
+--------------------------------------------------
+
+4) TECHNICAL REQUIREMENTS
+
+• Do NOT remove any existing routes
+• Keep database persistent
+• Keep clean folder structure
+• Use proper async/await
+• Handle errors properly
+• Ensure server runs correctly using Replit PORT
+
+--------------------------------------------------
+
+After finishing:
+
+1. Show updated folder structure
+2. Show updated index.js
+3. Show updated frontend files
+4. Confirm server runs without errors
+
+Implement fully working solution.
+Do not simplify.

@@ -1,0 +1,159 @@
+COPY EVERYTHING BELOW
+Copy code
+
+I am uploading my Postman collection JSON file for my project:
+
+Project Name: VRITARA Smart Safety System
+Collection Name: VRITARA Backend API v1
+
+Your task:
+
+1. Automatically read and parse the uploaded Postman collection JSON file.
+2. Extract all endpoints including:
+   - HTTP Method (GET, POST, PUT, DELETE)
+   - Full URL
+   - Endpoint path
+   - Headers
+   - Authorization requirements
+   - Request body (JSON)
+   - Example success responses
+   - Example error responses
+
+3. Generate a COMPLETE professional Backend API Documentation document in structured Markdown format.
+
+---------------------------------------------------
+DOCUMENT FORMAT REQUIREMENTS
+---------------------------------------------------
+
+Create a clean, professional document with the following structure:
+
+# VRITARA Smart Safety System
+## Backend API Documentation
+Version: 1.0
+Environment: Production
+Base URL: https://vritara-backend.replit.app
+Prepared For: PCB & Hardware Integration Vendor
+Date: (auto insert current date)
+
+---------------------------------------------------
+
+## 1. Project Overview
+Brief explanation of:
+- Purpose of VRITARA
+- Smart SOS system
+- Manual & Automatic SOS
+- JWT Authentication
+- Nearby device broadcast
+- Emergency contacts
+- Media storage
+- Incident logging system
+
+---------------------------------------------------
+
+## 2. Authentication Flow
+Explain:
+- Signup process
+- Login process
+- JWT Token generation
+- How to use Bearer token in headers
+- Token expiry details
+
+Example:
+
+Authorization Header Format:
+Authorization: Bearer <JWT_TOKEN>
+
+---------------------------------------------------
+
+## 3. API Endpoints
+
+For EACH endpoint use this exact structure:
+
+---------------------------------------------------
+### Endpoint Name
+
+Method: POST  
+URL: /api/auth/signup  
+Authentication: Not Required  
+
+Description:  
+Short professional explanation of what this endpoint does.
+
+Request Headers:
+| Key | Value |
+|-----|-------|
+| Content-Type | application/json |
+
+Request Body:
+```json
+{
+  "example": "value"
+}
+Success Response (201):
+Copy code
+Json
+{
+  "example": "response"
+}
+Error Responses:
+400 Bad Request
+401 Unauthorized
+404 Not Found
+500 Server Error
+Repeat this format for ALL endpoints found in the collection:
+Signup
+Login
+Trigger SOS
+Manual SOS
+Automatic SOS
+Update Location
+Upload Media
+Add Contact
+Get Incident History
+Server Status (and any other endpoints found)
+4. Emergency Flow Explanation (Important for PCB Vendor)
+Create a professional explanation section describing:
+What happens when Manual SOS is triggered
+What happens when Automatic SOS is triggered
+How location is stored
+How SMS is simulated
+How nearby broadcast within 200m works
+How incident logs are stored
+How media files are attached to incident
+How SOS toggle changes user emergency_state
+Make this technical and clear for hardware integration team.
+5. Database Schema Overview
+Brief description of tables:
+users
+emergency_contacts
+incident_logs
+location_logs
+media_storage
+sms_logs
+nearby_broadcasts
+Explain their relationships.
+6. Hardware Integration Notes
+Add a professional section explaining:
+Smartwatch triggers automatic SOS via API
+Device sends:
+latitude
+longitude
+sound_level
+motion_level
+media_ids
+Backend processes and broadcasts alert
+DNA mechanism is handled separately in wearable hardware (not app)
+FINAL STEP (VERY IMPORTANT)
+After generating the complete Markdown documentation:
+Convert it into a PROFESSIONAL formatted PDF.
+Add:
+Clean cover page
+Project logo space at top (leave placeholder if not available)
+Page numbers
+Proper spacing and formatting
+Clean section headings
+Use professional document styling.
+Export final file as:
+VRITARA_Backend_API_Documentation_v1.pdf
+The final PDF must be suitable for official submission to PCB vendor and technical hardware partners.
+Professional formatting is mandatory. Do not skip any endpoint. Do not summarize. Generate full detailed document.

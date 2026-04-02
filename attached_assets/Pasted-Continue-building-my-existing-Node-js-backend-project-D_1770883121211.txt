@@ -1,0 +1,118 @@
+Continue building my existing Node.js backend project.
+
+Do NOT create a new project.
+Extend the current backend that is already running on port 3000.
+
+I want to convert this into a full working VRITARA Safety App with both backend and frontend inside the same Replit project.
+
+-------------------------
+BACKEND REQUIREMENTS
+-------------------------
+
+Use:
+- Express
+- JWT authentication
+- bcrypt for password hashing
+- Multer for file upload (audio/image)
+- In-memory storage for now (arrays)
+- Proper folder structure
+
+Create these routes:
+
+AUTH:
+POST /api/signup
+POST /api/login
+POST /api/forgot-password
+
+USER:
+GET /api/user/profile
+PUT /api/user/profile
+
+CONTACTS:
+POST /api/contacts (max 3)
+GET /api/contacts
+DELETE /api/contacts/:id
+
+SOS:
+POST /api/sos/manual
+POST /api/sos/automatic
+
+UPLOAD:
+POST /api/upload (store image/audio in uploads folder)
+
+LOCATION:
+POST /api/location
+
+Add API key middleware:
+Header: X-API-Key
+Value: vritara-safety-device-key-2024
+
+If API key missing, return 401.
+
+-------------------------
+FRONTEND REQUIREMENTS
+-------------------------
+
+Create a frontend using:
+- HTML
+- CSS (modern aesthetic UI)
+- Vanilla JS
+
+Pages:
+- index.html (Login/Signup)
+- dashboard.html
+
+Features:
+1. Logo and App Name on top (VRITARA)
+2. Login (email + password)
+3. Signup (username, email, phone, password)
+4. Forgot password
+5. Dashboard after login:
+   - SOS button (big red animated button)
+   - Status indicator (Normal / Emergency)
+   - Add emergency contacts (max 3)
+   - View contacts
+   - Live location using navigator.geolocation
+   - Upload image/audio using device camera/mic
+   - Incident history list
+   - Logout
+
+When SOS is triggered:
+- Get user location
+- Send POST to /api/sos/manual
+- Upload media
+- Change status to Emergency
+- Show animated alert
+
+Make UI:
+- Colorful
+- Gradient background
+- Smooth animations
+- Mobile responsive
+- Modern card design
+
+-------------------------
+PROJECT STRUCTURE
+-------------------------
+
+Create:
+server/
+   routes/
+   middleware/
+   uploads/
+public/
+   index.html
+   dashboard.html
+   style.css
+   app.js
+
+Serve frontend using:
+app.use(express.static("public"))
+
+-------------------------
+
+Make sure everything runs on the same port 3000.
+Do not break my existing /status route.
+Keep it working.
+
+Return complete updated code.
