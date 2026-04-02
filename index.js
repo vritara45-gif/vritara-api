@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const { initializeDatabase } = require("./server/db");
+const { initializeDatabase, pool } = require("./server/db");
 
 const validateApiKey = require("./server/middleware/apiKey");
 const authRoutes = require("./server/routes/auth");
@@ -10,8 +10,10 @@ const contactRoutes = require("./server/routes/contacts");
 const sosRoutes = require("./server/routes/sos");
 const uploadRoutes = require("./server/routes/upload");
 const locationRoutes = require("./server/routes/location");
+const { authenticateToken } = require("./server/middleware/auth");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -23,12 +25,22 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "server/uploads")));
 
-const PORT = parseInt(process.env.PORT || "5000", 10);
+const PORT = parseInt(process.env.PORT || "10000", 10);
 
+// ======================
+// Basic Health Routes
+// ======================
 app.get("/status", (req, res) => {
   res.json({ status: "API is live" });
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// ======================
+// API Routes
+// ======================
 app.use("/api", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/contacts", contactRoutes);
@@ -36,8 +48,9 @@ app.use("/api/sos", sosRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/location", locationRoutes);
 
-const { authenticateToken } = require("./server/middleware/auth");
-const { pool } = require("./server/db");
+// ======================
+// Incident History Route
+// ======================
 app.get("/api/incidents", authenticateToken, async (req, res) => {
   try {
     const incidentsResult = await pool.query(
@@ -46,26 +59,50 @@ app.get("/api/incidents", authenticateToken, async (req, res) => {
     );
 
     const incidents = [];
+
     for (const incident of incidentsResult.rows) {
-      const smsResult = await pool.query(
-        "SELECT contact_name, contact_phone, status, created_at FROM sms_logs WHERE incident_id = $1",
-        [incident.id]
-      );
-      const broadcastResult = await pool.query(
-        `SELECT nb.distance_meters, nb.status, nb.created_at, u.username as receiver_name
-         FROM nearby_broadcasts nb LEFT JOIN users u ON nb.receiver_id = u.id
-         WHERE nb.incident_id = $1`,
-        [incident.id]
-      );
-      const mediaResult = await pool.query(
-        "SELECT id, filename, original_name, mimetype, file_size, created_at FROM media_storage WHERE incident_id = $1",
-        [incident.id]
-      );
+      let smsRows = [];
+      let broadcastRows = [];
+      let mediaRows = [];
+
+      try {
+        const smsResult = await pool.query(
+          "SELECT contact_name, contact_phone, status, created_at FROM sms_logs WHERE incident_id = $1",
+          [incident.id]
+        );
+        smsRows = smsResult.rows;
+      } catch (err) {
+        console.warn("sms_logs table missing or query failed:", err.message);
+      }
+
+      try {
+        const broadcastResult = await pool.query(
+          `SELECT nb.distance_meters, nb.status, nb.created_at, u.username as receiver_name
+           FROM nearby_broadcasts nb
+           LEFT JOIN users u ON nb.receiver_id = u.id
+           WHERE nb.incident_id = $1`,
+          [incident.id]
+        );
+        broadcastRows = broadcastResult.rows;
+      } catch (err) {
+        console.warn("nearby_broadcasts table missing or query failed:", err.message);
+      }
+
+      try {
+        const mediaResult = await pool.query(
+          "SELECT id, filename, original_name, mimetype, file_size, created_at FROM media_storage WHERE incident_id = $1",
+          [incident.id]
+        );
+        mediaRows = mediaResult.rows;
+      } catch (err) {
+        console.warn("media_storage query failed:", err.message);
+      }
+
       incidents.push({
         ...incident,
-        sms_notifications: smsResult.rows,
-        nearby_broadcasts: broadcastResult.rows,
-        media_files: mediaResult.rows,
+        sms_notifications: smsRows,
+        nearby_broadcasts: broadcastRows,
+        media_files: mediaRows,
       });
     }
 
@@ -76,13 +113,19 @@ app.get("/api/incidents", authenticateToken, async (req, res) => {
   }
 });
 
+// ======================
+// IoT Device Routes
+// ======================
 app.post("/api/sensor-data", validateApiKey, (req, res) => {
   console.log("Sensor Data Received:", req.body);
+
   const { sound_level, motion_level } = req.body;
   let emergency = false;
+
   if (sound_level > 80 && motion_level > 1.5) {
     emergency = true;
   }
+
   res.json({
     emergency,
     message: emergency ? "Emergency detected" : "Normal condition",
@@ -98,18 +141,18 @@ app.post("/api/heartbeat", validateApiKey, (req, res) => {
   res.json({ status: "Device alive" });
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
+// ======================
+// Start Server
+// ======================
 async function startServer() {
   try {
     await initializeDatabase();
+
     app.listen(PORT, "0.0.0.0", () => {
-      console.log(`VRITARA Server running on port ${PORT}`);
+      console.log(`✅ VRITARA Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error("Failed to start server:", err);
+    console.error("❌ Failed to start server:", err);
     process.exit(1);
   }
 }
