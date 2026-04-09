@@ -1,4 +1,4 @@
-const API_BASE = "";
+const API_BASE = "https://vritara-api.onrender.com";
 let currentLocation = { latitude: null, longitude: null };
 let otpEmailStore = "";
 let forgotEmailStore = "";
