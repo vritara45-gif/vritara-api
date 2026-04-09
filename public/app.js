@@ -1,4 +1,6 @@
 const API_BASE = "https://vritara-api.onrender.com";
+console.log("API_BASE =", API_BASE);
+
 let currentLocation = { latitude: null, longitude: null };
 let otpEmailStore = "";
 let forgotEmailStore = "";
@@ -11,7 +13,9 @@ function showAlert(message, type) {
   const box = document.getElementById("alertBox");
   if (!box) return;
   box.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-  setTimeout(() => { box.innerHTML = ""; }, 5000);
+  setTimeout(() => {
+    box.innerHTML = "";
+  }, 5000);
 }
 
 function hideAllForms() {
@@ -49,16 +53,31 @@ function showOtpRequest() {
   if (el) el.classList.remove("hidden");
 }
 
+async function safeJson(res) {
+  try {
+    return await res.json();
+  } catch (e) {
+    return { error: "Invalid server response" };
+  }
+}
+
 async function requestOtp() {
   const email = document.getElementById("otpEmail").value;
   if (!email) return showAlert("Please enter your email", "error");
+
+  console.log("REQUEST OTP URL:", API_BASE + "/api/request-otp");
+
   try {
     const res = await fetch(API_BASE + "/api/request-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    const data = await res.json();
+
+    console.log("OTP response status:", res.status);
+    const data = await safeJson(res);
+    console.log("OTP response data:", data);
+
     if (res.ok) {
       otpEmailStore = email;
       showAlert("OTP sent! Code: " + data.otp + " (simulated)", "success");
@@ -66,45 +85,61 @@ async function requestOtp() {
       const el = document.getElementById("otpVerifyForm");
       if (el) el.classList.remove("hidden");
     } else {
-      showAlert(data.error, "error");
+      showAlert(data.error || "Failed to send OTP", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    console.error("REQUEST OTP ERROR:", err);
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
 async function verifyOtp() {
   const otp = document.getElementById("otpCode").value;
   if (!otp) return showAlert("Please enter the OTP", "error");
+
+  console.log("VERIFY OTP URL:", API_BASE + "/api/verify-otp");
+
   try {
     const res = await fetch(API_BASE + "/api/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: otpEmailStore, otp }),
     });
-    const data = await res.json();
+
+    console.log("Verify OTP response status:", res.status);
+    const data = await safeJson(res);
+    console.log("Verify OTP response data:", data);
+
     if (res.ok) {
       localStorage.setItem("vritara_token", data.token);
       localStorage.setItem("vritara_user", JSON.stringify(data.user));
       window.location.href = "/dashboard.html";
     } else {
-      showAlert(data.error, "error");
+      showAlert(data.error || "OTP verification failed", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    console.error("VERIFY OTP ERROR:", err);
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
 async function handleForgot() {
   const email = document.getElementById("forgotEmail").value;
   if (!email) return showAlert("Please enter your email", "error");
+
+  console.log("FORGOT PASSWORD URL:", API_BASE + "/api/forgot-password");
+
   try {
     const res = await fetch(API_BASE + "/api/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    const data = await res.json();
+
+    console.log("Forgot password response status:", res.status);
+    const data = await safeJson(res);
+    console.log("Forgot password response data:", data);
+
     if (res.ok) {
       forgotEmailStore = email;
       showAlert("Reset token: " + data.resetToken + " (simulated)", "success");
@@ -112,32 +147,42 @@ async function handleForgot() {
       const el = document.getElementById("resetForm");
       if (el) el.classList.remove("hidden");
     } else {
-      showAlert(data.error, "error");
+      showAlert(data.error || "Forgot password failed", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    console.error("FORGOT PASSWORD ERROR:", err);
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
 async function handleReset() {
   const resetToken = document.getElementById("resetToken").value;
   const newPassword = document.getElementById("newPassword").value;
+
   if (!resetToken || !newPassword) return showAlert("Please fill in all fields", "error");
+
+  console.log("RESET PASSWORD URL:", API_BASE + "/api/reset-password");
+
   try {
     const res = await fetch(API_BASE + "/api/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: forgotEmailStore, resetToken, newPassword }),
     });
-    const data = await res.json();
+
+    console.log("Reset password response status:", res.status);
+    const data = await safeJson(res);
+    console.log("Reset password response data:", data);
+
     if (res.ok) {
-      showAlert(data.message, "success");
+      showAlert(data.message || "Password reset successful", "success");
       switchTab("login");
     } else {
-      showAlert(data.error, "error");
+      showAlert(data.error || "Reset failed", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    console.error("RESET PASSWORD ERROR:", err);
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
@@ -145,24 +190,34 @@ const loginForm = document.getElementById("loginForm");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
+
+    console.log("LOGIN URL:", API_BASE + "/api/login");
+    console.log("LOGIN EMAIL:", email);
+
     try {
       const res = await fetch(API_BASE + "/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+
+      console.log("Login response status:", res.status);
+      const data = await safeJson(res);
+      console.log("Login response data:", data);
+
       if (res.ok) {
         localStorage.setItem("vritara_token", data.token);
         localStorage.setItem("vritara_user", JSON.stringify(data.user));
         window.location.href = "/dashboard.html";
       } else {
-        showAlert(data.error, "error");
+        showAlert(data.error || "Login failed", "error");
       }
     } catch (err) {
-      showAlert("Network error", "error");
+      console.error("LOGIN ERROR:", err);
+      showAlert("Network error: " + err.message, "error");
     }
   });
 }
@@ -171,26 +226,36 @@ const signupFormEl = document.getElementById("signupForm");
 if (signupFormEl) {
   signupFormEl.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const username = document.getElementById("signupUsername").value;
     const email = document.getElementById("signupEmail").value;
     const phone = document.getElementById("signupPhone").value;
     const password = document.getElementById("signupPassword").value;
+
+    console.log("SIGNUP URL:", API_BASE + "/api/signup");
+    console.log("SIGNUP EMAIL:", email);
+
     try {
       const res = await fetch(API_BASE + "/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, phone, password }),
       });
-      const data = await res.json();
+
+      console.log("Signup response status:", res.status);
+      const data = await safeJson(res);
+      console.log("Signup response data:", data);
+
       if (res.ok) {
         localStorage.setItem("vritara_token", data.token);
         localStorage.setItem("vritara_user", JSON.stringify(data.user));
         window.location.href = "/dashboard.html";
       } else {
-        showAlert(data.error, "error");
+        showAlert(data.error || "Signup failed", "error");
       }
     } catch (err) {
-      showAlert("Network error", "error");
+      console.error("SIGNUP ERROR:", err);
+      showAlert("Network error: " + err.message, "error");
     }
   });
 }
@@ -292,13 +357,15 @@ function startLocationTracking() {
         method: "POST",
         headers: authHeaders(),
         body: JSON.stringify(currentLocation),
-      }).catch(() => {});
+      }).catch((err) => console.warn("Location sync failed:", err));
     },
     (err) => {
+      console.warn("Geolocation error:", err);
+
       if (latEl) latEl.textContent = "Denied";
       if (lngEl) lngEl.textContent = "Denied";
       if (statusEl) {
-        statusEl.querySelector("span").textContent = "Location access denied";
+        statusEl.innerHTML = '<span>Location access denied</span>';
         statusEl.style.background = "var(--danger-bg)";
         statusEl.style.color = "var(--danger)";
       }
@@ -313,12 +380,14 @@ async function loadSOSState() {
     const res = await fetch(API_BASE + "/api/sos/state", {
       headers: authHeaders(),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
     if (res.ok) {
       emergencyState = data.state || "normal";
       updateSOSUI();
     }
-  } catch (err) {}
+  } catch (err) {
+    console.warn("Load SOS state failed:", err);
+  }
 }
 
 function updateSOSUI() {
@@ -379,7 +448,9 @@ async function toggleSOS() {
         message: "Emergency SOS triggered from app",
       }),
     });
-    const data = await res.json();
+
+    const data = await safeJson(res);
+
     if (res.ok) {
       emergencyState = data.state;
       updateSOSUI();
@@ -408,7 +479,8 @@ async function toggleSOS() {
       showAlert(data.error || "Failed to toggle SOS", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    console.error("TOGGLE SOS ERROR:", err);
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
@@ -441,7 +513,8 @@ async function loadContacts() {
     const res = await fetch(API_BASE + "/api/contacts", {
       headers: authHeaders(),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (data.contacts && data.contacts.length > 0) {
       contactCount = data.contacts.length;
       list.innerHTML = data.contacts
@@ -489,7 +562,8 @@ async function addContact() {
       headers: authHeaders(),
       body: JSON.stringify({ name, phone, relationship }),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (res.ok) {
       showAlert("Contact added!", "success");
       document.getElementById("contactName").value = "";
@@ -497,10 +571,10 @@ async function addContact() {
       document.getElementById("contactRelation").value = "";
       loadContacts();
     } else {
-      showAlert(data.error, "error");
+      showAlert(data.error || "Failed to add contact", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
@@ -510,12 +584,13 @@ async function deleteContact(id) {
       method: "DELETE",
       headers: authHeaders(),
     });
+
     if (res.ok) {
       showAlert("Contact removed", "success");
       loadContacts();
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
@@ -527,7 +602,8 @@ async function loadIncidents() {
     const res = await fetch(API_BASE + "/api/incidents", {
       headers: authHeaders(),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (data.incidents && data.incidents.length > 0) {
       incidentCount = data.incidents.length;
       list.innerHTML = data.incidents
@@ -536,15 +612,19 @@ async function loadIncidents() {
           if (i.sms_notifications && i.sms_notifications.length > 0) {
             smsInfo = `<p class="incident-sms">SMS sent to: ${i.sms_notifications.map((s) => escapeHtml(s.contact_name)).join(", ")}</p>`;
           }
+
           let broadcastInfo = "";
           if (i.nearby_broadcasts && i.nearby_broadcasts.length > 0) {
             broadcastInfo = `<p class="incident-broadcast">Nearby alerts: ${i.nearby_broadcasts.length} user(s) notified</p>`;
           }
+
           let mediaInfo = "";
           if (i.media_files && i.media_files.length > 0) {
             mediaInfo = `<p class="incident-media">Evidence: ${i.media_files.length} file(s) attached</p>`;
           }
+
           const statusBadge = i.status ? `<span class="incident-status incident-status-${i.status}">${i.status}</span>` : "";
+
           return `
         <div class="incident-item">
           <span class="incident-type">${escapeHtml(i.type)} SOS</span>
@@ -587,38 +667,55 @@ async function loadMedia() {
     const res = await fetch(API_BASE + "/api/upload/media", {
       headers: authHeaders(),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (data.media && data.media.length > 0) {
-      gallery.innerHTML = '<div class="media-gallery">' + data.media.map((m) => {
-        const isImage = m.mimetype && m.mimetype.startsWith("image");
-        const isAudio = m.mimetype && m.mimetype.startsWith("audio");
-        const subDir = isAudio ? "audio" : "images";
+      gallery.innerHTML =
+        '<div class="media-gallery">' +
+        data.media
+          .map((m) => {
+            const isImage = m.mimetype && m.mimetype.startsWith("image");
+            const isAudio = m.mimetype && m.mimetype.startsWith("audio");
 
-        let preview = "";
-        if (isImage) {
-          preview = `<div class="media-preview"><img src="/uploads/${subDir}/${escapeHtml(m.filename)}" alt="${escapeHtml(m.original_name)}" onerror="this.parentElement.innerHTML='<div class=media-preview-audio><svg width=40 height=40 viewBox=&quot;0 0 24 24&quot; fill=none stroke=currentColor stroke-width=2><rect x=3 y=3 width=18 height=18 rx=2 ry=2/><circle cx=8.5 cy=8.5 r=1.5/><polyline points=&quot;21 15 16 10 5 21&quot;/></svg><span>Image</span></div>'"></div>`;
-        } else if (isAudio) {
-          preview = `<div class="media-preview"><div class="media-preview-audio"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg><span>Audio</span></div></div>`;
-        } else {
-          preview = `<div class="media-preview"><div class="media-preview-audio"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>File</span></div></div>`;
-        }
+            let fileUrl = m.file_path || "";
+            if (fileUrl && !fileUrl.startsWith("http")) {
+              fileUrl = API_BASE + fileUrl;
+            }
 
-        const sizeKB = m.file_size ? (m.file_size / 1024).toFixed(1) + " KB" : "--";
-        const incidentBadge = m.incident_id
-          ? `<div class="media-incident-badge" style="background:var(--warning-bg);color:var(--warning)">Incident #${m.incident_id}${m.incident_status ? " - " + m.incident_status : ""}</div>`
-          : `<div class="media-incident-badge" style="background:var(--info-bg);color:var(--info)">No incident</div>`;
+            let preview = "";
+            if (isImage) {
+              preview = `<div class="media-preview"><img src="${fileUrl}" alt="${escapeHtml(m.original_name)}" onerror="this.parentElement.innerHTML='<div class=media-preview-audio><span>Image not found</span></div>'"></div>`;
+            } else if (isAudio) {
+              preview = `<div class="media-preview">
+                <div class="media-preview-audio">
+                  <span>Audio</span>
+                </div>
+                <audio controls style="width:100%; margin-top:8px;">
+                  <source src="${fileUrl}" type="${escapeHtml(m.mimetype)}">
+                </audio>
+              </div>`;
+            } else {
+              preview = `<div class="media-preview"><div class="media-preview-audio"><span>File</span></div></div>`;
+            }
 
-        return `
-        <div class="media-item">
-          ${preview}
-          <div class="media-info">
-            <div class="media-name">${escapeHtml(m.original_name)}</div>
-            <div class="media-meta">${sizeKB} &middot; ${new Date(m.created_at).toLocaleString()}</div>
-            ${incidentBadge}
-          </div>
-          <button class="media-delete-btn" onclick="openDeleteModal(${m.id})">Delete</button>
-        </div>`;
-      }).join("") + '</div>';
+            const sizeKB = m.file_size ? (m.file_size / 1024).toFixed(1) + " KB" : "--";
+            const incidentBadge = m.incident_id
+              ? `<div class="media-incident-badge" style="background:var(--warning-bg);color:var(--warning)">Incident #${m.incident_id}${m.incident_status ? " - " + m.incident_status : ""}</div>`
+              : `<div class="media-incident-badge" style="background:var(--info-bg);color:var(--info)">No incident</div>`;
+
+            return `
+            <div class="media-item">
+              ${preview}
+              <div class="media-info">
+                <div class="media-name">${escapeHtml(m.original_name)}</div>
+                <div class="media-meta">${sizeKB} &middot; ${new Date(m.created_at).toLocaleString()}</div>
+                ${incidentBadge}
+              </div>
+              <button class="media-delete-btn" onclick="openDeleteModal(${m.id})">Delete</button>
+            </div>`;
+          })
+          .join("") +
+        "</div>";
     } else {
       gallery.innerHTML = '<p class="no-data">No media files yet. Media is captured automatically during SOS emergencies.</p>';
     }
@@ -661,7 +758,8 @@ async function confirmDeleteMedia() {
       headers: authHeaders(),
       body: JSON.stringify({ password }),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (res.ok) {
       closeDeleteModal();
       showAlert("Media deleted successfully", "success");
@@ -685,7 +783,8 @@ async function loadProfile() {
     const res = await fetch(API_BASE + "/api/user/profile", {
       headers: authHeaders(),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (res.ok) {
       const nameEl = document.getElementById("profileName");
       const emailEl = document.getElementById("profileEmail");
@@ -704,7 +803,9 @@ async function loadProfile() {
       if (editUser) editUser.value = data.username || "";
       if (editPhone) editPhone.value = data.phone || "";
     }
-  } catch (err) {}
+  } catch (err) {
+    console.warn("Profile load failed:", err);
+  }
 }
 
 function showEditProfile() {
@@ -731,7 +832,8 @@ async function saveProfile() {
       headers: authHeaders(),
       body: JSON.stringify({ username, phone }),
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (res.ok) {
       showAlert("Profile updated!", "success");
       if (data.user) {
@@ -748,7 +850,7 @@ async function saveProfile() {
       showAlert(data.error || "Failed to update profile", "error");
     }
   } catch (err) {
-    showAlert("Network error", "error");
+    showAlert("Network error: " + err.message, "error");
   }
 }
 
@@ -768,17 +870,19 @@ async function uploadFile(input) {
       headers: { Authorization: "Bearer " + getToken() },
       body: formData,
     });
-    const data = await res.json();
+    const data = await safeJson(res);
+
     if (res.ok) {
       if (statusEl) statusEl.textContent = "Uploaded: " + data.file.original_name;
       showAlert("File uploaded successfully!", "success");
+      loadMedia();
     } else {
       if (statusEl) statusEl.textContent = "Upload failed";
       showAlert(data.error || "Upload failed", "error");
     }
   } catch (err) {
     if (statusEl) statusEl.textContent = "Upload error";
-    showAlert("Network error uploading file", "error");
+    showAlert("Network error uploading file: " + err.message, "error");
   }
 
   input.value = "";
