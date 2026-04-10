@@ -682,20 +682,16 @@ async function loadMedia() {
               fileUrl = API_BASE + fileUrl;
             }
 
-            if (!fileUrl) {
-              console.warn("Missing file_path for media:", m);
-            }
-
             let preview = "";
             if (isImage) {
-              preview = `<div class="media-preview"><img src="${fileUrl}?t=${Date.now()}" alt="${escapeHtml(m.original_name)}" onerror="this.parentElement.innerHTML='<div class=media-preview-audio><span>Image not found</span></div>'"></div>`;
+              preview = `<div class="media-preview"><img src="${fileUrl}" alt="${escapeHtml(m.original_name)}" onerror="this.parentElement.innerHTML='<div class=media-preview-audio><span>Image not found</span></div>'"></div>`;
             } else if (isAudio) {
               preview = `<div class="media-preview">
                 <div class="media-preview-audio">
                   <span>Audio</span>
                 </div>
                 <audio controls style="width:100%; margin-top:8px;">
-                  <source src="${fileUrl}" type="audio/wav">
+                  <source src="${fileUrl}" type="${escapeHtml(m.mimetype)}">
                 </audio>
               </div>`;
             } else {
