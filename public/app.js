@@ -695,7 +695,7 @@ async function loadMedia() {
                   <span>Audio</span>
                 </div>
                 <audio controls style="width:100%; margin-top:8px;">
-                  <source src="${fileUrl}" type="${escapeHtml(m.mimetype)}">
+                  <source src="${fileUrl}" type="audio/wav">
                 </audio>
               </div>`;
             } else {
