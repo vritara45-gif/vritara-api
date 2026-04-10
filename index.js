@@ -24,7 +24,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Disable caching (important for media refresh)
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
   next();
@@ -33,14 +32,9 @@ app.use((req, res, next) => {
 // ======================
 // STATIC FILES
 // ======================
-
-// Frontend
 app.use(express.static(path.join(__dirname, "public")));
-
-// 🔥 IMPORTANT: serve uploaded media files
 app.use("/uploads", express.static(path.join(__dirname, "server/uploads")));
 
-// ======================
 const PORT = parseInt(process.env.PORT || "10000", 10);
 
 // ======================
@@ -88,7 +82,9 @@ app.get("/api/incidents", authenticateToken, async (req, res) => {
           [incident.id]
         );
         smsRows = smsResult.rows;
-      } catch (err) {}
+      } catch (err) {
+        console.warn("sms_logs table missing or query failed:", err.message);
+      }
 
       try {
         const broadcastResult = await pool.query(
@@ -99,18 +95,19 @@ app.get("/api/incidents", authenticateToken, async (req, res) => {
           [incident.id]
         );
         broadcastRows = broadcastResult.rows;
-      } catch (err) {}
+      } catch (err) {
+        console.warn("nearby_broadcasts table missing or query failed:", err.message);
+      }
 
       try {
-        // 🔥 IMPORTANT: include file_path (needed for frontend)
         const mediaResult = await pool.query(
-          `SELECT id, filename, original_name, mimetype, file_size, file_path, created_at 
-           FROM media_storage 
-           WHERE incident_id = $1`,
+          "SELECT id, filename, original_name, mimetype, file_size, created_at FROM media_storage WHERE incident_id = $1",
           [incident.id]
         );
         mediaRows = mediaResult.rows;
-      } catch (err) {}
+      } catch (err) {
+        console.warn("media_storage query failed:", err.message);
+      }
 
       incidents.push({
         ...incident,
